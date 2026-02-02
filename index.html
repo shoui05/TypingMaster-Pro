@@ -41,7 +41,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: var(--transition);
         }
 
         body {
@@ -54,6 +53,7 @@
             background-image: 
                 radial-gradient(circle at 15% 50%, rgba(67, 97, 238, 0.05) 0%, transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(76, 201, 240, 0.05) 0%, transparent 25%);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -233,12 +233,10 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: 0.5s;
-            animation: shimmer 2s infinite;
         }
 
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+        button:hover::before {
+            left: 100%;
         }
 
         button:hover {
@@ -385,6 +383,8 @@
             box-shadow: inset 0 3px 10px var(--shadow);
             transition: var(--transition);
             font-family: 'Georgia', serif;
+            cursor: text;
+            user-select: none;
         }
 
         .text-display:focus {
@@ -503,7 +503,7 @@
         }
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         .fade-in {
@@ -744,7 +744,7 @@
             cursor: pointer;
             transition: var(--transition);
             border: 1px solid var(--border);
-            height: 150px;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -770,42 +770,10 @@
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
+            margin-bottom: 15px;
         }
 
         .dark-mode .text-card-preview {
-            color: #aaa;
-        }
-
-        /* Real-time stats */
-        .live-stats {
-            display: flex;
-            justify-content: space-around;
-            margin: 20px 0;
-            padding: 15px;
-            background: var(--light);
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px var(--shadow);
-        }
-
-        .live-stat {
-            text-align: center;
-        }
-
-        .live-stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .live-stat-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .dark-mode .live-stat-label {
             color: #aaa;
         }
 
@@ -824,6 +792,11 @@
             box-shadow: 0 5px 15px var(--shadow);
         }
 
+        .result-item h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
         .result-details {
             display: flex;
             justify-content: space-between;
@@ -837,6 +810,14 @@
             background: rgba(67, 97, 238, 0.1);
             border-radius: 5px;
             font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+            font-size: 1.1rem;
         }
 
         /* Add Text Modal */
@@ -897,7 +878,13 @@
             cursor: pointer;
             color: var(--text);
             width: auto;
-            padding: 0;
+            padding: 5px 10px;
+            min-width: auto;
+        }
+
+        .modal-close:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         .modal-body {
@@ -910,6 +897,46 @@
             display: flex;
             justify-content: flex-end;
             gap: 15px;
+        }
+
+        .modal-footer button {
+            flex: 0 0 auto;
+            min-width: 120px;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: var(--radius);
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            animation: slideIn 0.3s ease;
+        }
+
+        .alert-success {
+            background-color: rgba(75, 156, 105, 0.1);
+            border-color: var(--success);
+            color: var(--success);
+        }
+
+        .alert-error {
+            background-color: rgba(194, 84, 84, 0.1);
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
 
         /* Responsive Design */
@@ -987,20 +1014,11 @@
                 padding: 12px 15px;
                 flex: 1;
                 text-align: center;
+                justify-content: center;
             }
             
             .text-gallery {
                 grid-template-columns: 1fr;
-            }
-            
-            .live-stats {
-                flex-wrap: wrap;
-                gap: 15px;
-            }
-            
-            .live-stat {
-                flex: 1;
-                min-width: 45%;
             }
             
             .result-details {
@@ -1011,6 +1029,14 @@
             .modal {
                 width: 95%;
                 margin: 10px;
+            }
+
+            .modal-footer {
+                flex-direction: column;
+            }
+
+            .modal-footer button {
+                width: 100%;
             }
         }
 
@@ -1039,18 +1065,6 @@
                 font-size: 18px;
                 padding: 15px;
             }
-            
-            .live-stat {
-                min-width: 100%;
-            }
-            
-            .modal-footer {
-                flex-direction: column;
-            }
-            
-            .modal-footer button {
-                width: 100%;
-            }
         }
     </style>
 </head>
@@ -1059,9 +1073,9 @@
         <header>
             <div class="logo">
                 <i class="fas fa-keyboard"></i>
-                <h1>TypingTest Pro By Shouib Ahamed</h1>
+                <h1>TypingTest Pro</h1>
             </div>
-            <p>Test and improve your typing speed and accuracy with our professional typing test</p>
+            <p>Test and improve your typing speed and accuracy</p>
         </header>
 
         <div class="tabs">
@@ -1098,10 +1112,10 @@
                         <label for="custom-text-title">Text Title</label>
                         <input type="text" id="custom-text-title" placeholder="Enter a title for your text">
                         
-                        <label for="custom-text">Enter your custom text:</label>
+                        <label for="custom-text" style="margin-top: 15px;">Enter your custom text:</label>
                         <textarea id="custom-text" placeholder="Type or paste your text here..."></textarea>
                         
-                        <button id="save-text-btn" class="secondary">
+                        <button id="save-text-btn" class="secondary" style="margin-top: 15px;">
                             <i class="fas fa-save"></i> Save Text
                         </button>
                     </div>
@@ -1188,7 +1202,6 @@
                 <p>Review your past typing test performances and track your progress over time.</p>
                 
                 <div id="results-history">
-                    <!-- Results history will be displayed here -->
                     <p class="no-results">No test results yet. Complete a typing test to see your results here.</p>
                 </div>
             </div>
@@ -1259,7 +1272,7 @@
         </div>
 
         <footer>
-            <p>&copy; By Shouib Ahamed | TypingTest Pro 2025 | Enhance your typing skills</p>
+            <p>&copy; TypingTest Pro 2025 | Enhance your typing skills</p>
         </footer>
     </div>
 
@@ -1277,24 +1290,24 @@
                     <label for="new-text-title">Text Title</label>
                     <input type="text" id="new-text-title" placeholder="Enter a title for your text">
                 </div>
-                <div class="setting-group">
+                <div class="setting-group" style="margin-top: 15px;">
                     <label for="new-text-content">Text Content</label>
                     <textarea id="new-text-content" placeholder="Enter your text here..." rows="10"></textarea>
                 </div>
-                <div class="setting-group">
+                <div class="setting-group" style="margin-top: 15px;">
                     <label for="text-category-select">Category</label>
                     <select id="text-category-select">
+                        <option value="saved">Saved Texts</option>
                         <option value="programming">Programming</option>
                         <option value="literature">Literature</option>
                         <option value="quotes">Famous Quotes</option>
                         <option value="news">News Articles</option>
-                        <option value="saved">Saved Texts</option>
                     </select>
                 </div>
                 <div class="file-upload" id="file-upload-area">
                     <i class="fas fa-file-upload"></i>
                     <p>Drag & drop a file here or click to upload</p>
-                    <input type="file" id="file-input" accept=".txt,.doc,.docx,.pdf" style="display: none;">
+                    <input type="file" id="file-input" accept=".txt" style="display: none;">
                 </div>
             </div>
             <div class="modal-footer">
@@ -1312,6 +1325,7 @@
         // DOM Elements
         const textSelectionTab = document.getElementById('text-selection-tab');
         const settingsPanel = document.getElementById('settings-tab');
+        const resultsTab = document.getElementById('results-tab');
         const testContainer = document.getElementById('test-container');
         const resultContainer = document.getElementById('result-container');
         const textCategorySelect = document.getElementById('text-category');
@@ -1363,93 +1377,97 @@
 
         // Test state variables
         let testActive = false;
-        let timerInterval;
-        let startTime;
+        let timerInterval = null;
+        let startTime = null;
         let currentText = '';
         let typedChars = 0;
         let correctChars = 0;
         let wrongChars = 0;
-        let testDuration = 5; // Default 5 minutes
-        let totalTime = 300; // 5 minutes in seconds
-        let savedTexts = JSON.parse(localStorage.getItem('typingmaster-saved-texts')) || [];
-        let testResults = JSON.parse(localStorage.getItem('typingmaster-test-results')) || [];
+        let testDuration = 5;
+        let totalTime = 300;
+        let savedTexts = [];
+        let testResults = [];
         let selectedText = null;
+        let firstKeystrokeListener = null;
 
         // Predefined texts
         const programmingTexts = [
             { 
                 title: "JavaScript Fundamentals", 
-                text: "JavaScript is a versatile programming language primarily used for creating interactive web applications. It enables dynamic content updates, interactive maps, animated graphics, and much more. JavaScript is an essential technology alongside HTML and CSS, forming the backbone of modern web development. The language supports object-oriented, imperative, and functional programming styles. Modern JavaScript includes advanced features like arrow functions, promises, async/await, modules, and classes. Understanding JavaScript's event loop, closure, and prototype-based inheritance is crucial for mastering the language. JavaScript frameworks like React, Angular, and Vue have revolutionized frontend development, while Node.js has enabled JavaScript to be used for server-side programming as well." 
+                text: "JavaScript is a versatile programming language primarily used for creating interactive web applications. It enables dynamic content updates, interactive maps, animated graphics, and much more. JavaScript is an essential technology alongside HTML and CSS, forming the backbone of modern web development. The language supports object-oriented, imperative, and functional programming styles. Modern JavaScript includes advanced features like arrow functions, promises, async/await, modules, and classes. Understanding JavaScript's event loop, closure, and prototype-based inheritance is crucial for mastering the language." 
             },
             { 
-                title: "HTML Structure & Semantics", 
-                text: "HTML (HyperText Markup Language) is the fundamental building block of the Web. It defines the structure and meaning of web content through a system of elements and tags. HTML5 introduced numerous semantic elements like <header>, <footer>, <nav>, <article>, and <section> that provide better document structure and accessibility. Attributes in HTML elements provide additional information about elements, such as IDs, classes, and data attributes. Forms in HTML allow user input collection with various control types like text fields, checkboxes, radio buttons, and submission buttons. HTML also supports multimedia elements natively through <audio> and <video> tags, eliminating the need for third-party plugins. Proper HTML structure is crucial for SEO, accessibility, and maintaining clean, maintainable code." 
+                title: "HTML Structure", 
+                text: "HTML (HyperText Markup Language) is the fundamental building block of the Web. It defines the structure and meaning of web content through a system of elements and tags. HTML5 introduced numerous semantic elements like header, footer, nav, article, and section that provide better document structure and accessibility. Attributes in HTML elements provide additional information about elements, such as IDs, classes, and data attributes. Forms in HTML allow user input collection with various control types like text fields, checkboxes, radio buttons, and submission buttons." 
             },
             { 
-                title: "CSS Styling & Layout", 
-                text: "CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of documents written in HTML. CSS controls layout, colors, fonts, spacing, animations, and responsive design across different devices. Modern CSS includes Flexbox and Grid layout systems that provide powerful tools for creating complex responsive layouts with less code. CSS preprocessors like Sass and Less extend CSS functionality with variables, nesting, and mixins. CSS frameworks such as Bootstrap and Tailwind CSS provide pre-designed components and utility classes to accelerate development. CSS animations and transitions allow creating engaging user experiences without JavaScript. Understanding the CSS box model, specificity, and cascade is essential for effectively styling web pages and troubleshooting layout issues." 
+                title: "CSS Styling", 
+                text: "CSS (Cascading Style Sheets) is a stylesheet language used to describe the presentation of documents written in HTML. CSS controls layout, colors, fonts, spacing, animations, and responsive design across different devices. Modern CSS includes Flexbox and Grid layout systems that provide powerful tools for creating complex responsive layouts with less code. CSS frameworks such as Bootstrap and Tailwind CSS provide pre-designed components and utility classes to accelerate development." 
             },
             { 
-                title: "Python Programming Concepts", 
-                text: "Python is a high-level, interpreted programming language known for its clear syntax and readability. It supports multiple programming paradigms including procedural, object-oriented, and functional programming. Python's extensive standard library provides modules and functions for various tasks like file I/O, system calls, and internet protocols. Key features include dynamic typing, automatic memory management, and support for exception handling. Python is widely used in web development (Django, Flask), data science (Pandas, NumPy), artificial intelligence (TensorFlow, PyTorch), and automation. List comprehensions, generators, and decorators are powerful Python constructs that enable concise and efficient code. The language's philosophy emphasizes code readability and simplicity, as summarized in the Zen of Python." 
+                title: "Python Programming", 
+                text: "Python is a high-level, interpreted programming language known for its clear syntax and readability. It supports multiple programming paradigms including procedural, object-oriented, and functional programming. Python's extensive standard library provides modules and functions for various tasks like file I/O, system calls, and internet protocols. Key features include dynamic typing, automatic memory management, and support for exception handling. Python is widely used in web development, data science, artificial intelligence, and automation." 
             },
             { 
-                title: "React Framework Overview", 
-                text: "React is a JavaScript library for building user interfaces, particularly single-page applications. It follows a component-based architecture where UIs are broken down into reusable, self-contained components. React uses a virtual DOM to optimize rendering performance by minimizing direct manipulation of the actual DOM. JSX syntax allows writing HTML-like code within JavaScript, making component definitions more intuitive. State management is central to React applications, with hooks like useState and useEffect providing functional components with state and lifecycle capabilities. React's unidirectional data flow makes applications more predictable and easier to debug. The ecosystem includes tools like React Router for navigation, Redux for state management, and Next.js for server-side rendering." 
+                title: "React Framework", 
+                text: "React is a JavaScript library for building user interfaces, particularly single-page applications. It follows a component-based architecture where UIs are broken down into reusable, self-contained components. React uses a virtual DOM to optimize rendering performance by minimizing direct manipulation of the actual DOM. JSX syntax allows writing HTML-like code within JavaScript, making component definitions more intuitive. State management is central to React applications." 
             }
         ];
 
         const literatureTexts = [
             { 
-                title: "Classic Literature Excerpt", 
-                text: "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair, we had everything before us, we had nothing before us, we were all going direct to Heaven, we were all going direct the other way—in short, the period was so far like the present period, that some of its noisiest authorities insisted on its being received, for good or for evil, in the superlative degree of comparison only." 
+                title: "Classic Opening", 
+                text: "It was the best of times, it was the worst of times, it was the age of wisdom, it was the age of foolishness, it was the epoch of belief, it was the epoch of incredulity, it was the season of Light, it was the season of Darkness, it was the spring of hope, it was the winter of despair." 
             },
             { 
-                title: "Modern Literary Fiction", 
-                text: "He walked through the rain-slicked streets of the city, the neon signs reflecting off the wet pavement like scattered jewels. Each step echoed in the quiet night, a solitary rhythm in the urban symphony. Memories flooded back—of times when these streets were filled with laughter and purpose, now reduced to hollow reminders of what once was. The city had changed, or perhaps he had changed, the relentless passage of time etching its story on both the landscape and his soul. In the distance, a train whistle sounded, a mournful cry that seemed to encapsulate the loneliness he felt. Yet, amidst the melancholy, there was a strange beauty in the emptiness, a clarity that only comes when one is truly alone with their thoughts." 
+                title: "City Streets", 
+                text: "He walked through the rain-slicked streets of the city, the neon signs reflecting off the wet pavement like scattered jewels. Each step echoed in the quiet night, a solitary rhythm in the urban symphony. Memories flooded back of times when these streets were filled with laughter and purpose, now reduced to hollow reminders of what once was." 
             },
             { 
-                title: "Poetic Masterpiece", 
-                text: "Shall I compare thee to a summer's day? Thou art more lovely and more temperate: Rough winds do shake the darling buds of May, And summer's lease hath all too short a date: Sometime too hot the eye of heaven shines, And often is his gold complexion dimm'd; And every fair from fair sometime declines, By chance or nature's changing course untrimm'd; But thy eternal summer shall not fade, Nor lose possession of that fair thou ow'st; Nor shall Death brag thou wander'st in his shade, When in eternal lines to time thou grow'st: So long as men can breathe or eyes can see, So long lives this, and this gives life to thee." 
+                title: "Nature's Beauty", 
+                text: "The sun rose over the mountains, painting the sky in shades of orange and pink. Birds began their morning songs, welcoming the new day with cheerful melodies. Dew glistened on the grass like tiny diamonds, and a gentle breeze carried the scent of wildflowers across the valley. Nature awakened in all its glory, reminding us of the simple beauty that surrounds us every day." 
             },
             { 
-                title: "Science Fiction Narrative", 
-                text: "The starship drifted silently through the void, its hull glistening with the light of distant suns. On the bridge, Captain Elara studied the sensor readings, her brow furrowed in concentration. They had traveled beyond the charted regions of space, into territories marked only by legend and speculation. The alien artifact they pursued was said to hold secrets of a civilization that had mastered time itself—a power that could save humanity or destroy it. As they approached the coordinates, the ship's systems began to behave erratically, as if reality itself was unraveling around them. Time dilated and compressed simultaneously, creating moments that stretched into eternity and epochs that passed in the blink of an eye. They were on the threshold of discovery, but at what cost?" 
+                title: "Space Journey", 
+                text: "The starship drifted silently through the void, its hull glistening with the light of distant suns. On the bridge, Captain Elara studied the sensor readings, her brow furrowed in concentration. They had traveled beyond the charted regions of space, into territories marked only by legend and speculation. The alien artifact they pursued was said to hold secrets of a civilization that had mastered time itself." 
             }
         ];
 
         const quotesTexts = [
             { 
-                title: "Philosophical Reflections", 
-                text: "The unexamined life is not worth living. - Socrates. We are what we repeatedly do. Excellence, then, is not an act, but a habit. - Aristotle. Life is really simple, but we insist on making it complicated. - Confucius. In the middle of difficulty lies opportunity. - Albert Einstein. The only true wisdom is in knowing you know nothing. - Socrates. He who has a why to live can bear almost any how. - Friedrich Nietzsche. The mind is everything. What you think you become. - Buddha. I think, therefore I am. - René Descartes. The function of prayer is not to influence God, but rather to change the nature of the one who prays. - Søren Kierkegaard." 
+                title: "Philosophical Wisdom", 
+                text: "The unexamined life is not worth living. We are what we repeatedly do. Excellence, then, is not an act, but a habit. Life is really simple, but we insist on making it complicated. In the middle of difficulty lies opportunity. The only true wisdom is in knowing you know nothing. He who has a why to live can bear almost any how. The mind is everything. What you think you become." 
             },
             { 
-                title: "Leadership & Success Principles", 
-                text: "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill. The greatest glory in living lies not in never falling, but in rising every time we fall. - Nelson Mandela. The way to get started is to quit talking and begin doing. - Walt Disney. Your time is limited, so don't waste it living someone else's life. - Steve Jobs. If you look at what you have in life, you'll always have more. If you look at what you don't have in life, you'll never have enough. - Oprah Winfrey. Life is what happens when you're busy making other plans. - John Lennon. Spread love everywhere you go. Let no one ever come to you without leaving happier. - Mother Teresa. The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt." 
+                title: "Leadership Quotes", 
+                text: "Success is not final, failure is not fatal: it is the courage to continue that counts. The greatest glory in living lies not in never falling, but in rising every time we fall. The way to get started is to quit talking and begin doing. Your time is limited, so don't waste it living someone else's life. If you look at what you have in life, you'll always have more." 
             },
             { 
-                title: "Scientific Perspectives", 
-                text: "The most beautiful thing we can experience is the mysterious. It is the source of all true art and science. - Albert Einstein. Two things are infinite: the universe and human stupidity; and I'm not sure about the universe. - Albert Einstein. Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world. - Albert Einstein. The important thing is not to stop questioning. Curiosity has its own reason for existence. - Albert Einstein. Science is not only a disciple of reason but also one of romance and passion. - Stephen Hawking. We are just an advanced breed of monkeys on a minor planet of a very average star. But we can understand the Universe. That makes us something very special. - Stephen Hawking." 
+                title: "Scientific Minds", 
+                text: "The most beautiful thing we can experience is the mysterious. It is the source of all true art and science. Two things are infinite: the universe and human stupidity; and I'm not sure about the universe. Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world. The important thing is not to stop questioning. Curiosity has its own reason for existence." 
             }
         ];
 
         const newsTexts = [
             { 
-                title: "Technology Innovation Report", 
-                text: "Artificial intelligence is transforming industries at an unprecedented pace, with recent breakthroughs in natural language processing and computer vision enabling applications that were once confined to science fiction. Quantum computing is moving from theoretical research to practical implementation, promising to solve complex problems that are currently intractable for classical computers. The Internet of Things continues to expand, connecting billions of devices and generating vast amounts of data that fuel machine learning algorithms. 5G networks are rolling out globally, providing the infrastructure for autonomous vehicles, smart cities, and immersive augmented reality experiences. Meanwhile, cybersecurity has become increasingly critical as society's dependence on digital systems grows, with new threats emerging alongside technological advancements." 
+                title: "Technology News", 
+                text: "Artificial intelligence is transforming industries at an unprecedented pace, with recent breakthroughs in natural language processing and computer vision enabling applications that were once confined to science fiction. Quantum computing is moving from theoretical research to practical implementation, promising to solve complex problems that are currently intractable for classical computers. The Internet of Things continues to expand, connecting billions of devices and generating vast amounts of data." 
             },
             { 
-                title: "Environmental Science Update", 
-                text: "Climate scientists have issued their most urgent warning yet, indicating that global temperatures are rising faster than previous models predicted. The latest IPCC report highlights the narrowing window to limit global warming to 1.5 degrees Celsius above pre-industrial levels. Renewable energy adoption is accelerating, with solar and wind power becoming cost-competitive with fossil fuels in many regions. However, carbon emissions continue to rise, driven by economic growth and increased energy consumption. Biodiversity loss is occurring at an alarming rate, with ecosystems struggling to adapt to rapidly changing conditions. International climate negotiations have produced commitments from many nations, but implementation remains inconsistent. Technological solutions like carbon capture and storage are being developed, but their scalability and effectiveness are still unproven at the required levels." 
+                title: "Environmental Update", 
+                text: "Climate scientists have issued their most urgent warning yet, indicating that global temperatures are rising faster than previous models predicted. Renewable energy adoption is accelerating, with solar and wind power becoming cost-competitive with fossil fuels in many regions. However, carbon emissions continue to rise, driven by economic growth and increased energy consumption. Biodiversity loss is occurring at an alarming rate." 
             },
             { 
-                title: "Space Exploration Developments", 
-                text: "The new space race is accelerating with multiple private companies and national agencies planning missions to the Moon, Mars, and beyond. NASA's Artemis program aims to return humans to the lunar surface by the mid-2020s, establishing a sustainable presence as a stepping stone for Mars missions. SpaceX continues to develop its Starship vehicle, designed to carry large crews and cargo to distant destinations. Meanwhile, astronomers are making extraordinary discoveries with powerful new telescopes, identifying thousands of exoplanets and gathering data that may answer fundamental questions about the universe's origins. Space tourism is becoming a reality, with several companies offering suborbital flights to private citizens. As activity in space increases, international discussions are focusing on regulations for space traffic management, resource utilization, and planetary protection protocols." 
+                title: "Space Exploration", 
+                text: "The new space race is accelerating with multiple private companies and national agencies planning missions to the Moon, Mars, and beyond. NASA's Artemis program aims to return humans to the lunar surface, establishing a sustainable presence as a stepping stone for Mars missions. SpaceX continues to develop its Starship vehicle, designed to carry large crews and cargo to distant destinations." 
             }
         ];
 
         // Initialize the application
         function init() {
+            // Load saved data
+            loadSavedData();
+            
             // Event listeners
             textCategorySelect.addEventListener('change', renderTextOptions);
             testModeSelect.addEventListener('change', updateTestMode);
@@ -1489,11 +1507,26 @@
                 });
             });
 
-            // Initialize based on current settings
+            // Initialize UI
             updateTestMode();
             checkDarkModePreference();
             renderTextOptions();
             renderTestResults();
+        }
+
+        // Load saved data from localStorage
+        function loadSavedData() {
+            try {
+                const savedTextsData = localStorage.getItem('typingmaster-saved-texts');
+                const testResultsData = localStorage.getItem('typingmaster-test-results');
+                
+                savedTexts = savedTextsData ? JSON.parse(savedTextsData) : [];
+                testResults = testResultsData ? JSON.parse(testResultsData) : [];
+            } catch (error) {
+                console.error('Error loading saved data:', error);
+                savedTexts = [];
+                testResults = [];
+            }
         }
 
         // Switch between tabs
@@ -1515,6 +1548,11 @@
                     content.classList.remove('active');
                 }
             });
+
+            // Refresh results when switching to results tab
+            if (tabId === 'results') {
+                renderTestResults();
+            }
         }
 
         // Render text options based on category
@@ -1549,7 +1587,7 @@
             }
             
             if (texts.length === 0) {
-                textGallery.innerHTML = '<p>No texts available in this category.</p>';
+                textGallery.innerHTML = '<p class="no-results">No texts available in this category. Add some texts to get started!</p>';
                 return;
             }
             
@@ -1558,17 +1596,18 @@
                 textCard.classList.add('text-card');
                 textCard.innerHTML = `
                     <div>
-                        <div class="text-card-title">${item.title}</div>
-                        <div class="text-card-preview">${item.text.substring(0, 120)}${item.text.length > 120 ? '...' : ''}</div>
+                        <div class="text-card-title">${escapeHtml(item.title)}</div>
+                        <div class="text-card-preview">${escapeHtml(item.text.substring(0, 120))}${item.text.length > 120 ? '...' : ''}</div>
                     </div>
                     <button class="use-text-btn" data-index="${index}" data-category="${category}">Select This Text</button>
                 `;
                 textGallery.appendChild(textCard);
             });
             
-            // Add event listeners to use buttons
+            // Add event listeners to select buttons
             document.querySelectorAll('.use-text-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
                     const index = parseInt(this.getAttribute('data-index'));
                     const category = this.getAttribute('data-category');
                     
@@ -1590,10 +1629,25 @@
                             break;
                     }
                     
-                    // Switch to settings tab
-                    switchTab('settings');
+                    // Visual feedback
+                    document.querySelectorAll('.use-text-btn').forEach(b => {
+                        b.innerHTML = '<i class="fas fa-check"></i> Select This Text';
+                    });
+                    this.innerHTML = '<i class="fas fa-check-circle"></i> Selected!';
+                    
+                    // Switch to settings tab after a short delay
+                    setTimeout(() => {
+                        switchTab('settings');
+                    }, 500);
                 });
             });
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Toggle custom time input
@@ -1608,7 +1662,7 @@
         // Update test mode
         function updateTestMode() {
             if (testModeSelect.value === 'time') {
-                testLengthLabel.textContent = 'Test Duration (Minutes)';
+                testLengthLabel.innerHTML = '<i class="fas fa-hourglass-half"></i> Test Duration';
                 testLengthSelect.innerHTML = `
                     <option value="1">1 minute</option>
                     <option value="2">2 minutes</option>
@@ -1617,11 +1671,12 @@
                     <option value="custom">Custom time</option>
                 `;
             } else {
-                testLengthLabel.textContent = 'Word Count';
+                testLengthLabel.innerHTML = '<i class="fas fa-list-ol"></i> Word Count';
                 testLengthSelect.innerHTML = `
                     <option value="25">25 words</option>
                     <option value="50">50 words</option>
                     <option value="100" selected>100 words</option>
+                    <option value="200">200 words</option>
                 `;
             }
             toggleCustomTimeInput();
@@ -1633,12 +1688,12 @@
             const text = customTextArea.value.trim();
             
             if (!title) {
-                alert('Please enter a title for your text');
+                showAlert('Please enter a title for your text', 'error');
                 return;
             }
             
             if (text.length < 10) {
-                alert('Please enter at least 10 characters of text');
+                showAlert('Please enter at least 10 characters of text', 'error');
                 return;
             }
             
@@ -1650,7 +1705,34 @@
             customTextTitle.value = '';
             customTextArea.value = '';
             
-            alert('Text saved successfully!');
+            showAlert('Text saved successfully!', 'success');
+            
+            // If we're viewing saved texts, refresh the view
+            if (textCategorySelect.value === 'saved') {
+                renderTextOptions();
+            }
+        }
+
+        // Show alert message
+        function showAlert(message, type = 'success') {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                <span>${escapeHtml(message)}</span>
+            `;
+            
+            // Insert at the top of the current visible tab
+            const activeTab = document.querySelector('.tab-content.active');
+            const firstCard = activeTab.querySelector('.card');
+            if (firstCard) {
+                firstCard.insertBefore(alertDiv, firstCard.firstChild);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            }
         }
 
         // Open the add text modal
@@ -1673,50 +1755,39 @@
             const category = textCategorySelectModal.value;
             
             if (!title) {
-                alert('Please enter a title for your text');
+                showAlert('Please enter a title for your text', 'error');
                 return;
             }
             
             if (text.length < 10) {
-                alert('Please enter at least 10 characters of text');
+                showAlert('Please enter at least 10 characters of text', 'error');
                 return;
             }
             
-            // Add to appropriate category
-            switch(category) {
-                case 'programming':
-                    programmingTexts.push({ title, text });
-                    break;
-                case 'literature':
-                    literatureTexts.push({ title, text });
-                    break;
-                case 'quotes':
-                    quotesTexts.push({ title, text });
-                    break;
-                case 'news':
-                    newsTexts.push({ title, text });
-                    break;
-                case 'saved':
-                    savedTexts.push({ title, text });
-                    localStorage.setItem('typingmaster-saved-texts', JSON.stringify(savedTexts));
-                    break;
-            }
+            // Add to saved texts (always save to localStorage)
+            savedTexts.push({ title, text });
+            localStorage.setItem('typingmaster-saved-texts', JSON.stringify(savedTexts));
             
             // Close modal
             closeAddTextModal();
             
-            // Update text selection if we're on that tab
-            if (textCategorySelect.value === category) {
+            // Update text selection if we're on saved category
+            if (textCategorySelect.value === 'saved') {
                 renderTextOptions();
             }
             
-            alert('Text added successfully!');
+            showAlert('Text added successfully!', 'success');
         }
 
         // Handle file upload
         function handleFileUpload(e) {
             const file = e.target.files[0];
             if (!file) return;
+            
+            if (file.size > 1000000) { // 1MB limit
+                showAlert('File size must be less than 1MB', 'error');
+                return;
+            }
             
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -1725,9 +1796,17 @@
                 
                 // Set title to filename without extension
                 const fileName = file.name.replace(/\.[^/.]+$/, "");
-                newTextTitle.value = fileName;
+                if (!newTextTitle.value) {
+                    newTextTitle.value = fileName;
+                }
+            };
+            reader.onerror = function() {
+                showAlert('Error reading file. Please try again.', 'error');
             };
             reader.readAsText(file);
+            
+            // Reset file input
+            fileInput.value = '';
         }
 
         // Render test results history
@@ -1743,13 +1822,17 @@
             testResults.slice().reverse().forEach((result, index) => {
                 const resultItem = document.createElement('div');
                 resultItem.classList.add('result-item');
+                
+                const date = new Date(result.date);
+                const dateStr = isNaN(date.getTime()) ? 'Unknown date' : date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+                
                 resultItem.innerHTML = `
-                    <h3>Test #${testResults.length - index} - ${new Date(result.date).toLocaleDateString()}</h3>
+                    <h3>Test #${testResults.length - index} - ${dateStr}</h3>
                     <div class="result-details">
-                        <span>WPM: ${result.netWpm}</span>
-                        <span>Accuracy: ${result.accuracy}%</span>
-                        <span>Time: ${result.time}</span>
-                        <span>Mode: ${result.mode}</span>
+                        <span><i class="fas fa-tachometer-alt"></i> WPM: ${result.netWpm || 0}</span>
+                        <span><i class="fas fa-bullseye"></i> Accuracy: ${result.accuracy || 0}%</span>
+                        <span><i class="fas fa-clock"></i> Time: ${result.time || 'N/A'}</span>
+                        <span><i class="fas fa-cog"></i> Mode: ${result.mode || 'Unknown'}</span>
                     </div>
                 `;
                 resultsHistory.appendChild(resultItem);
@@ -1772,6 +1855,13 @@
 
         // Start the typing test
         function startTest() {
+            // Validate text selection
+            if (!selectedText || selectedText.trim().length === 0) {
+                showAlert('Please select a text before starting the test', 'error');
+                switchTab('text-selection');
+                return;
+            }
+
             // Get test settings
             const testMode = testModeSelect.value;
             
@@ -1779,6 +1869,10 @@
             if (testMode === 'time') {
                 if (testLengthSelect.value === 'custom') {
                     testDuration = parseInt(customTimeInput.value) || 5;
+                    if (testDuration < 1 || testDuration > 60) {
+                        showAlert('Please enter a valid time between 1 and 60 minutes', 'error');
+                        return;
+                    }
                 } else {
                     testDuration = parseInt(testLengthSelect.value);
                 }
@@ -1786,25 +1880,22 @@
                 timerDisplay.textContent = formatTime(totalTime);
             } else {
                 // For word-based tests, set a long time limit
-                testDuration = 60; // 60 minutes max for word-based tests
+                testDuration = 60;
                 totalTime = testDuration * 60;
                 timerDisplay.textContent = "∞";
             }
             
-            // Use selected text or generate new one
-            if (selectedText) {
-                currentText = selectedText;
-            } else {
-                // Default text if none selected
-                currentText = "The quick brown fox jumps over the lazy dog. This pangram contains every letter of the English alphabet at least once. Typing practice helps improve your speed and accuracy over time.";
-            }
+            // Use selected text
+            currentText = selectedText;
             
             // Display the text
             displayText(currentText);
             
-            // Show test container, hide settings
-            settingsPanel.classList.add('hidden');
+            // Show test container, hide other tabs
+            tabs.forEach(tab => tab.style.display = 'none');
             textSelectionTab.classList.add('hidden');
+            settingsPanel.classList.add('hidden');
+            resultsTab.classList.add('hidden');
             testContainer.classList.remove('hidden');
             resultContainer.classList.add('hidden');
             
@@ -1819,7 +1910,20 @@
             
             // Set up the test to start on first keystroke
             testActive = false;
-            typingInput.addEventListener('keydown', startOnFirstKeystroke, { once: true });
+            
+            // Remove any existing listener
+            if (firstKeystrokeListener) {
+                typingInput.removeEventListener('keydown', firstKeystrokeListener);
+            }
+            
+            // Create and add new listener
+            firstKeystrokeListener = function(e) {
+                if (!testActive && e.key !== 'Tab') {
+                    startOnFirstKeystroke();
+                }
+            };
+            
+            typingInput.addEventListener('keydown', firstKeystrokeListener, { once: true });
         }
 
         // Start test on first keystroke
@@ -1828,7 +1932,6 @@
             startTime = new Date();
             
             if (testModeSelect.value === 'time') {
-                // Start timer for time-based tests
                 startTimer(totalTime);
             }
         }
@@ -1837,10 +1940,16 @@
         function displayText(text) {
             textDisplay.innerHTML = '';
             
+            if (!text || text.length === 0) {
+                textDisplay.innerHTML = '<p>No text available. Please select a text.</p>';
+                return;
+            }
+            
             for (let i = 0; i < text.length; i++) {
                 const charSpan = document.createElement('span');
                 charSpan.classList.add('character');
                 charSpan.textContent = text[i];
+                charSpan.setAttribute('data-index', i);
                 textDisplay.appendChild(charSpan);
             }
             
@@ -1850,7 +1959,7 @@
             }
             
             // Set word count display
-            const words = text.split(' ').length;
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0).length;
             wordCountDisplay.textContent = `${words} words`;
         }
 
@@ -1862,6 +1971,7 @@
             
             if (timerInterval) {
                 clearInterval(timerInterval);
+                timerInterval = null;
             }
             
             timerDisplay.textContent = formatTime(totalTime);
@@ -1871,6 +1981,11 @@
         // Start the timer
         function startTimer(durationInSeconds) {
             let timeLeft = durationInSeconds;
+            
+            // Clear any existing timer
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
             
             timerInterval = setInterval(() => {
                 timeLeft--;
@@ -1884,6 +1999,8 @@
                 
                 // End test if time is up
                 if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
                     endTest();
                 }
             }, 1000);
@@ -1891,6 +2008,7 @@
 
         // Format time as MM:SS
         function formatTime(seconds) {
+            if (seconds < 0) seconds = 0;
             const mins = Math.floor(seconds / 60);
             const secs = seconds % 60;
             return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
@@ -1903,9 +2021,18 @@
             const inputText = typingInput.value;
             const textLength = inputText.length;
             
+            // Prevent typing beyond text length
+            if (textLength > currentText.length) {
+                typingInput.value = inputText.substring(0, currentText.length);
+                return;
+            }
+            
             // Update character classes based on input
+            const chars = textDisplay.querySelectorAll('.character');
+            
             for (let i = 0; i < currentText.length; i++) {
-                const charSpan = textDisplay.children[i];
+                const charSpan = chars[i];
+                if (!charSpan) continue;
                 
                 if (i < textLength) {
                     if (currentText[i] === inputText[i]) {
@@ -1915,28 +2042,30 @@
                         charSpan.classList.add('incorrect');
                         charSpan.classList.remove('correct');
                     }
-                } else {
-                    charSpan.classList.remove('correct', 'incorrect');
-                }
-                
-                // Update current character highlight
-                if (i === textLength) {
-                    charSpan.classList.add('current');
-                } else {
                     charSpan.classList.remove('current');
+                } else {
+                    charSpan.classList.remove('correct', 'incorrect', 'current');
+                    if (i === textLength) {
+                        charSpan.classList.add('current');
+                    }
                 }
             }
             
             // Update statistics
             updateStats(inputText);
             
+            // Check if test is complete
+            if (textLength >= currentText.length) {
+                setTimeout(() => endTest(), 100);
+            }
+            
             // Check if word-based test is complete
             if (testModeSelect.value === 'words') {
-                const wordsTyped = inputText.trim().split(/\s+/).length;
+                const wordsTyped = inputText.trim().split(/\s+/).filter(w => w.length > 0).length;
                 const targetWords = parseInt(testLengthSelect.value);
                 
-                if (wordsTyped >= targetWords) {
-                    endTest();
+                if (wordsTyped >= targetWords && textLength >= currentText.length) {
+                    setTimeout(() => endTest(), 100);
                 }
             }
         }
@@ -1951,12 +2080,11 @@
 
         // Update statistics during the test
         function updateStats(inputText) {
-            // Count characters
             typedChars = inputText.length;
             correctChars = 0;
             wrongChars = 0;
             
-            for (let i = 0; i < typedChars; i++) {
+            for (let i = 0; i < typedChars && i < currentText.length; i++) {
                 if (currentText[i] === inputText[i]) {
                     correctChars++;
                 } else {
@@ -1967,20 +2095,28 @@
 
         // End the test
         function endTest() {
+            if (!testActive && !startTime) return;
+            
             testActive = false;
             
             // Stop timer
             if (timerInterval) {
                 clearInterval(timerInterval);
+                timerInterval = null;
             }
             
             // Calculate final statistics
-            const timeElapsed = (new Date() - startTime) / 1000; // in seconds
+            const endTime = new Date();
+            const timeElapsed = startTime ? (endTime - startTime) / 1000 : 0;
             const timeInMinutes = timeElapsed / 60;
             
-            // Calculate WPM (words per minute)
+            // Ensure we have valid input
+            const inputText = typingInput.value || '';
+            updateStats(inputText);
+            
+            // Calculate WPM
             const grossWpm = timeInMinutes > 0 ? Math.round((typedChars / 5) / timeInMinutes) : 0;
-            const netWpm = timeInMinutes > 0 ? Math.round(((correctChars / 5) - wrongChars) / timeInMinutes) : 0;
+            const netWpm = timeInMinutes > 0 ? Math.round(((correctChars / 5) - (wrongChars / timeInMinutes)) / timeInMinutes) : 0;
             
             // Calculate accuracy
             const accuracy = typedChars > 0 ? Math.round((correctChars / typedChars) * 100) : 100;
@@ -1999,7 +2135,7 @@
                 charSpan.classList.add('character');
                 
                 if (i < typedChars) {
-                    if (currentText[i] === typingInput.value[i]) {
+                    if (currentText[i] === inputText[i]) {
                         charSpan.classList.add('correct');
                     } else {
                         charSpan.classList.add('incorrect');
@@ -2019,95 +2155,115 @@
                 correctChars: correctChars,
                 incorrectChars: wrongChars,
                 time: Math.round(timeElapsed) + ' seconds',
-                mode: testModeSelect.value === 'time' ? `${testDuration} minutes` : `${testLengthSelect.value} words`
+                mode: testModeSelect.value === 'time' ? `${testDuration} minute${testDuration > 1 ? 's' : ''}` : `${testLengthSelect.value} words`
             };
             
             testResults.push(testResult);
             localStorage.setItem('typingmaster-test-results', JSON.stringify(testResults));
-            renderTestResults();
             
-            // Show result container
+            // Show result container and tabs
             testContainer.classList.add('hidden');
             resultContainer.classList.remove('hidden');
+            tabs.forEach(tab => tab.style.display = 'flex');
         }
 
         // Restart the test with same settings
         function restartTest() {
-            testContainer.classList.add('hidden');
-            settingsPanel.classList.remove('hidden');
-            startTest();
-        }
-
-        // Retry the test with same text
-        function retryTest() {
-            resultContainer.classList.add('hidden');
-            testContainer.classList.remove('hidden');
-            
-            // Reset stats
+            // Reset and start again
             resetStats();
-            
-            // Display the same text
             displayText(currentText);
             
-            // Focus on input
+            testContainer.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+            
             setTimeout(() => {
                 typingInput.value = '';
                 typingInput.focus();
             }, 100);
             
-            // Set up the test to start on first keystroke
             testActive = false;
-            typingInput.addEventListener('keydown', startOnFirstKeystroke, { once: true });
+            
+            // Remove any existing listener
+            if (firstKeystrokeListener) {
+                typingInput.removeEventListener('keydown', firstKeystrokeListener);
+            }
+            
+            // Create and add new listener
+            firstKeystrokeListener = function(e) {
+                if (!testActive && e.key !== 'Tab') {
+                    startOnFirstKeystroke();
+                }
+            };
+            
+            typingInput.addEventListener('keydown', firstKeystrokeListener, { once: true });
         }
 
-        // Start a new test with different settings
+        // Retry the test
+        function retryTest() {
+            restartTest();
+        }
+
+        // Start a new test
         function newTest() {
             resultContainer.classList.add('hidden');
             textSelectionTab.classList.remove('hidden');
+            tabs.forEach(tab => tab.style.display = 'flex');
+            switchTab('text-selection');
+            selectedText = null;
         }
 
         // Export results
         function exportResults() {
-            const timeElapsed = (new Date() - startTime) / 1000; // in seconds
+            if (!startTime) return;
+            
+            const endTime = new Date();
+            const timeElapsed = (endTime - startTime) / 1000;
             const timeInMinutes = timeElapsed / 60;
             
-            // Calculate WPM (words per minute)
             const grossWpm = timeInMinutes > 0 ? Math.round((typedChars / 5) / timeInMinutes) : 0;
-            const netWpm = timeInMinutes > 0 ? Math.round(((correctChars / 5) - wrongChars) / timeInMinutes) : 0;
-            
-            // Calculate accuracy
+            const netWpm = timeInMinutes > 0 ? Math.round(((correctChars / 5) - (wrongChars / timeInMinutes)) / timeInMinutes) : 0;
             const accuracy = typedChars > 0 ? Math.round((correctChars / typedChars) * 100) : 100;
             
-            const resultText = `TypingMaster Pro Test Results:
+            const resultText = `TypingTest Pro - Test Results
             
-Gross WPM: ${grossWpm}
-Net WPM: ${netWpm}
+Date: ${new Date().toLocaleString()}
+            
+=== RESULTS ===
+Gross WPM: ${Math.max(0, grossWpm)}
+Net WPM: ${Math.max(0, netWpm)}
 Accuracy: ${accuracy}%
 Correct Characters: ${correctChars}
 Incorrect Characters: ${wrongChars}
-Time: ${Math.round(timeElapsed)} seconds
+Time Elapsed: ${Math.round(timeElapsed)} seconds
 Test Mode: ${testModeSelect.value === 'time' ? 'Time-based' : 'Word-based'}
-            
-Date: ${new Date().toLocaleString()}
+Test Duration/Length: ${testModeSelect.value === 'time' ? testDuration + ' minutes' : testLengthSelect.value + ' words'}
+
+=== TEXT TYPED ===
+${typingInput.value}
+
+Thank you for using TypingTest Pro!
             `;
             
-            // Create a blob and download link
+            // Create blob and download
             const blob = new Blob([resultText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'typing-test-results.txt';
+            a.download = `typing-test-results-${Date.now()}.txt`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            
+            showAlert('Results exported successfully!', 'success');
         }
 
-        // Initialize the app when the DOM is loaded
-        document.addEventListener('DOMContentLoaded', init);
+        // Initialize when DOM is loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 </body>
 </html>
-
-
-
