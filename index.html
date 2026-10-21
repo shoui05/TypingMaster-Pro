@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TypeWarrior — Typing Game &amp; Speed Test</title>
+<meta name="description" content="Fight your shadow with every keystroke. Free typing game that trains speed and accuracy.">
+<meta name="theme-color" content="#0a0a0f">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/src/styles/main.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="logo">
+      <div class="logo-icon"><i class="fas fa-keyboard"></i></div>
+      <div class="logo-text">Type<span>Warrior</span></div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="theme-btn" title="Toggle theme"><i class="fas fa-circle-half-stroke"></i></button>
+      <button class="icon-btn" id="history-shortcut-btn" title="View history"><i class="fas fa-history"></i></button>
+    </div>
+  </header>
+
+  <!-- TABS -->
+  <div class="tabs" id="main-tabs">
+    <button class="tab active" data-tab="text-panel"><i class="fas fa-font"></i> <span>Texts</span></button>
+    <button class="tab" data-tab="config-panel"><i class="fas fa-sliders"></i> <span>Config</span></button>
+    <button class="tab" data-tab="history-panel"><i class="fas fa-chart-line"></i> <span>History</span></button>
+  </div>
+
+  <!-- PANEL: TEXT SELECTION -->
+  <div class="panel active" id="text-panel">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-align-left"></i> Choose a Text</div>
+
+      <div class="category-pills" id="category-pills">
+        <button class="pill active" data-cat="programming">Programming</button>
+        <button class="pill" data-cat="literature">Literature</button>
+        <button class="pill" data-cat="quotes">Quotes</button>
+        <button class="pill" data-cat="news">Science & Tech</button>
+        <button class="pill" data-cat="saved">Saved</button>
+        <button class="pill" data-cat="custom">Custom</button>
+      </div>
+
+      <div class="text-grid" id="text-grid"></div>
+
+      <div class="custom-section" id="custom-section">
+        <div class="form-group">
+          <label class="form-label">Title</label>
+          <input type="text" class="form-input" id="custom-title" placeholder="My custom text">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Text Content</label>
+          <textarea class="form-textarea" id="custom-body" placeholder="Paste your text here (at least 50 characters)..."></textarea>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-secondary" id="save-custom-btn"><i class="fas fa-floppy-disk"></i> Save Text</button>
+          <button class="btn btn-primary" id="use-custom-btn"><i class="fas fa-play"></i> Use This Text</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="text-align:right;margin-top:-4px;">
+      <button class="btn btn-secondary btn-sm" id="open-add-modal"><i class="fas fa-plus"></i> Add Text</button>
+    </div>
+  </div>
+
+  <!-- PANEL: CONFIG -->
+  <div class="panel" id="config-panel">
+    <div class="card">
+      <div class="card-title"><i class="fas fa-sliders"></i> Test Configuration</div>
+
+      <div class="form-group">
+        <label class="form-label">Test Mode</label>
+        <div class="segment" id="mode-segment">
+          <button class="segment-btn active" data-mode="time">Time Based</button>
+          <button class="segment-btn" data-mode="words">Word Based</button>
+        </div>
+      </div>
+
+      <div class="form-group" id="duration-group">
+        <label class="form-label" id="duration-label">Duration</label>
+        <div class="duration-grid" id="duration-grid">
+          <button class="duration-btn" data-val="1">1 min</button>
+          <button class="duration-btn" data-val="2">2 min</button>
+          <button class="duration-btn active" data-val="3">3 min</button>
+          <button class="duration-btn" data-val="5">5 min</button>
+          <button class="duration-btn" data-val="custom">Custom</button>
+        </div>
+        <div id="custom-duration-wrap" style="display:none;margin-top:10px;">
+          <input type="number" class="form-input" id="custom-duration-input" min="1" max="120" placeholder="Minutes" style="max-width:140px;">
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <div class="setting-row">
+          <div class="setting-row-label"><i class="fas fa-delete-left"></i> Backspace</div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-backspace" checked>
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-label"><i class="fas fa-eye"></i> Show WPM Live</div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-livewpm" checked>
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-label"><i class="fas fa-volume-high"></i> Sound Effects</div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-sound">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-label"><i class="fas fa-hand-fist"></i> Shadow Fight Mode</div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-fight">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+        <div class="setting-row">
+          <div class="setting-row-label"><i class="fas fa-text-height"></i> Large Font</div>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-font">
+            <span class="toggle-track"></span>
+            <span class="toggle-thumb"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-full btn-lg" id="start-btn" style="margin-top:4px;">
+      <i class="fas fa-play"></i> Begin Test
+    </button>
+    <div class="shortcut-hint">Press <span class="kbd">Tab</span> + <span class="kbd">Enter</span> to quickly restart</div>
+  </div>
+
+  <!-- PANEL: HISTORY -->
+  <div class="panel" id="history-panel">
+    <div class="card">
+      <div class="card-title" style="justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <span><i class="fas fa-chart-line"></i> Test History</span>
+        <button class="btn btn-danger btn-sm" id="clear-history-btn"><i class="fas fa-trash"></i> Clear</button>
+      </div>
+      <div id="history-list"></div>
+    </div>
+  </div>
+
+  <!-- TEST ARENA -->
+  <div id="test-arena">
+    <div class="fight-wrap" id="fight-wrap"><canvas id="fight-cv"></canvas></div>
+    <div class="live-stats">
+      <div class="live-stat">
+        <div class="live-stat-value stat-wpm" id="live-wpm">0</div>
+        <div class="live-stat-label">WPM</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value stat-acc" id="live-acc">100%</div>
+        <div class="live-stat-label">Accuracy</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value stat-err" id="live-err">0</div>
+        <div class="live-stat-label">Errors</div>
+      </div>
+      <div class="live-stat">
+        <div class="live-stat-value stat-time" id="live-time">—</div>
+        <div class="live-stat-label">Time Left</div>
+      </div>
+    </div>
+
+    <div class="timer-bar-wrap">
+      <div class="timer-value" id="timer-display">—</div>
+      <div class="progress-track"><div class="progress-bar" id="progress-bar"></div></div>
+      <div class="word-counter" id="word-counter">0 words</div>
+    </div>
+
+    <div class="typing-area" id="typing-area" tabindex="0">
+      <div class="typing-text" id="typing-text"></div>
+      <div class="typing-hint" id="typing-hint">
+        <p>Click here and start typing</p>
+        <span class="hint-key">Click to focus</span>
+      </div>
+      <textarea id="typing-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="-1"></textarea>
+    </div>
+
+    <div class="arena-actions">
+      <button class="btn btn-secondary btn-sm" id="restart-btn"><i class="fas fa-rotate-left"></i> Restart</button>
+      <button class="btn btn-danger btn-sm" id="end-btn"><i class="fas fa-stop"></i> End</button>
+    </div>
+  </div>
+
+  <!-- RESULTS PANEL -->
+  <div id="results-panel">
+    <div class="result-hero">
+      <div id="rating-badge" class="rating-badge"></div>
+      <div class="result-wpm" id="res-wpm">0</div>
+      <div class="result-wpm-label">Words Per Minute</div>
+    </div>
+
+    <div class="result-grid">
+      <div class="result-stat">
+        <div class="result-stat-value stat-wpm" id="res-gross-wpm">0</div>
+        <div class="result-stat-label">Gross WPM</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value stat-acc" id="res-acc">100%</div>
+        <div class="result-stat-label">Accuracy</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value" id="res-correct" style="color:var(--correct)">0</div>
+        <div class="result-stat-label">Correct Chars</div>
+      </div>
+      <div class="result-stat">
+        <div class="result-stat-value stat-err" id="res-errors">0</div>
+        <div class="result-stat-label">Errors</div>
+      </div>
+    </div>
+
+    <div class="review-card">
+      <div class="card-title" style="margin-bottom:14px;"><i class="fas fa-magnifying-glass"></i> Error Review</div>
+      <div class="review-text" id="review-text"></div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-primary" id="retry-btn"><i class="fas fa-rotate-left"></i> Retry Same Text</button>
+      <button class="btn btn-secondary" id="new-test-btn"><i class="fas fa-plus"></i> New Test</button>
+      <button class="btn btn-secondary" id="export-btn"><i class="fas fa-download"></i> Export</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ADD TEXT MODAL -->
+<div class="modal-backdrop" id="add-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="fas fa-plus" style="color:var(--accent);margin-right:8px;"></i>Add New Text</div>
+      <button class="icon-btn" id="close-modal"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Title *</label>
+        <input type="text" class="form-input" id="modal-title" placeholder="My Text Title">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Content *</label>
+        <textarea class="form-textarea" id="modal-content" placeholder="Enter text (min 50 characters)..." rows="8"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category</label>
+        <select class="form-select" id="modal-cat">
+          <option value="saved">Saved</option>
+          <option value="programming">Programming</option>
+          <option value="literature">Literature</option>
+          <option value="quotes">Quotes</option>
+          <option value="news">Science & Tech</option>
+        </select>
+      </div>
+      <div class="file-drop" id="file-drop">
+        <i class="fas fa-file-arrow-up"></i>
+        <p>Drop a <span>.txt file</span> here or click to browse</p>
+        <input type="file" id="file-input" accept=".txt" style="display:none;">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" id="cancel-modal">Cancel</button>
+      <button class="btn btn-primary" id="confirm-add-modal"><i class="fas fa-floppy-disk"></i> Save Text</button>
+    </div>
+  </div>
+</div>
+
+<script src="/js/app.js"></script>
+<script src="/js/fight.js"></script>
+<script>
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}));
+}
+</script>
+</body>
+</html>
